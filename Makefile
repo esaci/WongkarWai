@@ -10,7 +10,7 @@ OBJS_DIR = ./objects/
 OBJ = $(SRCS:.c=.o)
 OBJS = $(addprefix $(OBJS_DIR), $(OBJ))
 $(NAME) : $(OBJS)
-	$(CXX) -lncurses $(CXX_FLAGS) $^ -o $@
+	$(CXX) $(CXX_FLAGS) $^ -o $@ -lncurses
 
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)%.c

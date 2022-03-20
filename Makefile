@@ -1,31 +1,59 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: cdefonte <cdefonte@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/12/29 12:16:09 by cdefonte          #+#    #+#              #
+#    Updated: 2022/03/19 18:38:03 by cdefonte         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = 2048
 
-CXX = cc
-CXX_FLAGS = -Wall -Wextra -Werror
+SRC_DIR = src/
+OBJ_DIR = obj/
+INC_DIR = inc/
+LIBFT_DIR = libft/
 
-SRCS_DIR = ./srcs/
-SRCS =	main.c 
+SRC_LST =	main.c			\
+			print_image.c	\
+			rand_num.c		\
+			mov_functions.c	\
+			descendant_function.c \
+			ascendant_function.c
 
-OBJS_DIR = ./objects/
-OBJ = $(SRCS:.c=.o)
-OBJS = $(addprefix $(OBJS_DIR), $(OBJ))
-$(NAME) : $(OBJS)
-	$(CXX) $(CXX_FLAGS) $^ -o $@ -lncurses
+INCLUDES = -I$(INC_DIR) -I$(LIBFT_DIR)
 
+SRC = $(addprefix $(SRC_DIR), $(SRC_LST))
+OBJ = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
+INC = $(INC_DIR)wongkarwai.h 
 
-$(OBJS_DIR)%.o : $(SRCS_DIR)%.c
-	@mkdir -p $(@D)
-	$(CXX) $(CXX_FLAGS) -o $@ -c $< 
-all : $(NAME)
-	
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+RM = rm -f
 
-clean :
-	rm -rf $(OBJS_DIR)
+all: libft $(NAME)
 
-fclean : clean
-	rm -rf $(NAME)
+$(NAME): $(INC) $(OBJ) $(LIBFT_DIR)libft.a
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -L$(LIBFT_DIR) -lft -lncurses
 
-re : fclean all
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c $(INC) $(LIBFT_DIR)libft.a
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
 
-.PHONY : all clean fclean re
+clean:
+	$(MAKE) $@ -C $(LIBFT_DIR)
+	$(RM) $(OBJ)
 
+fclean:
+	$(MAKE) $@ -C $(LIBFT_DIR)
+	$(RM) $(OBJ) $(NAME)
+
+re: fclean all
+
+libft:
+	$(MAKE) -C $(LIBFT_DIR)
+
+.PHONY: all clean fclean re libft

@@ -6,7 +6,7 @@
 /*   By: cdefonte <cdefonte@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/19 09:23:34 by cdefonte          #+#    #+#             */
-/*   Updated: 2022/03/19 19:54:51 by cdefonte         ###   ########.fr       */
+/*   Updated: 2022/03/20 17:40:32 by cdefonte         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,10 @@ int	ft_init_game(t_game *game, int board_size)
 	game->empty_cases = board_size * board_size;
 	ft_init_tabval(game);
 	ft_fill_rand_num(game);
+	game->victory = -1;
+	int	x = WIN_VALUE;
+	if (!(x &(x-1)))
+		game->victory = 0;
 	return (0);
 }
 
@@ -147,36 +151,15 @@ int	ft_print_boxes(t_game *game)
 	return (0);
 }
 
-void	ft_print_tab(t_game game)
-{
-	int		x;
-	int		y;
-
-	x = 0;
-	y = 0;
-	while (x < game.board_size)
-	{
-		y = 0;
-		while (y < game.board_size)
-		{
-			printf("tab[%d][%d] = %d\n", x, y, game.values[x][y]);
-			y++;
-		}
-		x++;
-	}
-}
-
-int	main(int argc, char **argv)
+int	main(void)
 {
 	int		inputch;
-	int		board_size; // 4x4 ou 5x5=bonus
+	int		board_size;
 	t_game	game;
 
-	if (argc > 1)
-		board_size = ft_atoi(argv[1]);
-	else
-		board_size = 4;
-	// ATTENTION si size terminal insuffisante ...
+	board_size = 4;
+	savetty();
+	signal_game();
 	ft_init_game(&game, board_size);
 	if (game.width < 20 || game.height < 20)
 	{
@@ -186,7 +169,7 @@ int	main(int argc, char **argv)
 	ft_call_options();
 	inputch = -1;
 	ft_print_boxes(&game);
-	while (inputch != 27)
+	while (game.victory >= 0 && inputch != 27)
 	{
 		inputch = getch();
 		if (inputch == KEY_RESIZE)
@@ -196,31 +179,29 @@ int	main(int argc, char **argv)
 			ft_print_boxes(&game);
 		}
 		else if (inputch == KEY_LEFT)
-		{
-			// CALCUL ce qui se passe et modifie le game->values
-			write(2, "LEFT\n", 5);
 			make_move(&game, 0, -1);
-		}
 		else if (inputch == KEY_RIGHT)
-		{
-			write(2, "RIGHT\n", 6);
 			make_move(&game, 0, 1);
-		}
 		else if (inputch == KEY_DOWN)
-		{
-			write(2, "DOWN\n", 5);
-			make_move(&game, -1, 0);
-		}
-		else if (inputch == KEY_UP)
-		{
-			write(2, "UP\n", 5);
 			make_move(&game, 1, 0);
-		}
+		else if (inputch == KEY_UP)
+			make_move(&game, -1, 0);
+		// else if (inputch == KEY_BACKSPACE)
+		// {
+			// game.values[0][0] = 16;
+			// game.values[1][0] = 8;
+			// game.values[2][0] = 4;
+			// game.values[3][0] = 4;
+			// ft_print_boxes(&game);
+		// }
 	}
+	resetty();
 	endwin();
-//	ft_print_tab(game);
-//	ft_fill_rand_num(&game);
-//	printf("dSDSDSDSDSDSDSDSD\n");
-//	ft_print_tab(game);
+	if (game.victory == -1)
+		ft_putstr_fd("YOU LOSE\n", 1);
+	if (game.victory == -2 || game.victory == 1)
+		ft_putstr_fd("YOU WIN\n", 1);
+	if (game.victory == -3)
+		ft_putstr_fd("ULTIMATE WIN 2048!!!!!!!!!!!\n", 1);
 	return (0);
 }

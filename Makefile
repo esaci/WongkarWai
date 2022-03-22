@@ -6,7 +6,7 @@
 #    By: cdefonte <cdefonte@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/29 12:16:09 by cdefonte          #+#    #+#              #
-#    Updated: 2022/03/19 18:38:03 by cdefonte         ###   ########.fr        #
+#    Updated: 2022/03/20 17:40:46 by cdefonte         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ SRC_LST =	main.c			\
 			rand_num.c		\
 			mov_functions.c	\
 			descendant_function.c \
-			ascendant_function.c
+			ascendant_function.c \
+			signal.c
 
 INCLUDES = -I$(INC_DIR) -I$(LIBFT_DIR)
 
@@ -31,7 +32,7 @@ OBJ = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
 INC = $(INC_DIR)wongkarwai.h 
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror# -D WIN_VALUE=1024
 RM = rm -f
 
 all: libft $(NAME)
